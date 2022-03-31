@@ -58,9 +58,9 @@ function ConverterUI() {
 
   const RequestResponse = ({ data, title }: { data: IConvertedData | IRawData, title: string }) =>
     <div className="flex-1 p-1">
-      <h2 className="text-1xl pb-2">{title}</h2>
-      {data.map((item) =>
-        <div className="text-sm">
+      <h2 className="text-1xl pb-2 text-gray-500" style={{ color: "#4E6381" }}>{title}</h2>
+      {data.map((item, idx) =>
+        <div key={idx} className="text-sm">
           <p>Key: {item[0]}</p>
           <p>Value: {item[1]}</p>
         </div>
@@ -69,8 +69,8 @@ function ConverterUI() {
 
   const CalcOperationSelector = () =>
     <div className="flex font-funky">
-      {Calculator.operationSymbols.map((symbol) =>
-        <OperationBtn onClick={() => setOperation(symbol[0] as Operation)}>
+      {Calculator.operationSymbols.map((symbol, idx) =>
+        <OperationBtn key={idx} onClick={() => setOperation(symbol[0] as Operation)}>
           {symbol[1]}
         </OperationBtn>
       )}
@@ -84,13 +84,14 @@ function ConverterUI() {
       <span>{'='}</span>
       <span>{calculator.firstValue ? calculator.calculateRounded() : "__"}</span>
     </div>
+
   // ============= compositions ======================
 
 
   return (
     <div className="flex justify-center items-center">
       {loading &&
-        <ReactLoading className='absolute' type="cylon" color="#7871E5" height={100} width={100} />
+        <ReactLoading className='absolute' type="cylon" color="#87ABDF" height={100} width={100} />
       }
       <BoxContainer>
         <>
@@ -117,7 +118,7 @@ function ConverterUI() {
 export enum ExceptionCode { InvalidInput = "Invalid input" }
 
 const App = () =>
-  <div className="flex h-screen justify-center items-center bg-slate-200">
+  <div className="flex h-screen justify-center items-center bg-slate-700">
     <ConverterUI />
     <NotificationContainer />
   </div>

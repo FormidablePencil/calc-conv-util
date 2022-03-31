@@ -2,6 +2,7 @@ body {
   margin: 0;
   /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", */
   font-family: "StartWars-Regular";
+  color: #647FA5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -43,10 +44,4 @@ code {
 @tailwind components;
 @tailwind utilities;
 
-
-@layer base {
-  html {
-    font-family: "PaletteMosaic Regular", Proxima Nova, system-ui, sans-serif;
-  }
-}
 

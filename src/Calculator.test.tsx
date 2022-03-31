@@ -29,7 +29,6 @@ describe('calculator', () => {
 
       operation = value
       expect(typeof calculator.calculateRounded() === "number").toBeTruthy()
-      console.log(calculator.calculateRounded())
     }
   })
 

@@ -42,6 +42,11 @@ export default class Converter {
   }
 
   postCalculatedResult = async () => {
+    if (this.getConvertedData() === undefined) {
+      NotificationManager.info("Hint: Get data first before posting.", `Nothing to post`);
+      return
+    }
+
     let gatheredData = [...this.getConvertedData()!, ["operation", this.getOperation()]]
 
     const formattedData = Object.fromEntries(gatheredData)
