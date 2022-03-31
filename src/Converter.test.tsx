@@ -9,13 +9,14 @@ describe("Converter", () => {
 
   const converter = new Converter(setRawDataMock, setConvertedDataMock, convertedData);
 
+  jest.setTimeout(10000)
+
   afterEach(() => {
     convertedData = undefined
     rawData = undefined;
   });
 
   test("requestData", async () => {
-    jest.setTimeout(10000)
     await converter.requestData();
     expect([rawData![0][0], rawData![1][0]]).toEqual(["key1", "key2"]);
   })

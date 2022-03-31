@@ -1,43 +1,58 @@
 import { evaluate } from 'mathjs';
 
-import { IConvertedData } from './App';
+import { IConvertedData, IRawData } from './App';
 
 export enum Operation {
-  Division = 'plus',
+  Division = 'divided by',
   Subtraction = 'minus',
-  Addition = 'times',
-  Multiplication = 'divided by'
+  Addition = 'plus',
+  Multiplication = 'times'
 }
 
 export default class Calculator {
-  data: IConvertedData
+  static operationSymbols = [
+    [Operation.Division, "/"],
+    [Operation.Subtraction, "-"],
+    [Operation.Addition, "+"],
+    [Operation.Multiplication, "*"]
+  ]
 
-  constructor(data: IConvertedData) {
-    this.data = data
+  private getRawData(): IRawData | undefined { return undefined }
+  private getConvertedData(): IConvertedData | undefined { return undefined }
+  getOperation(): Operation { return Operation.Addition }
+
+  get firstValue() {
+    if (this.getConvertedData() === undefined) return undefined
+    return this.getConvertedData()![0][1]
   }
 
-  enumToSymbol = (operation: Operation) => {
-    switch (operation) {
-      case Operation.Division:
-        return '/'
-      case Operation.Subtraction:
-        return '-'
-      case Operation.Addition:
-        return '+'
-      case Operation.Multiplication:
-        return '*'
-    }
+  get secondValue() {
+    if (this.getConvertedData() === undefined) return undefined
+    return this.getConvertedData()![1][1]
   }
 
-  calculate(operation: Operation) {
-    return this.calculateWithString(this.enumToSymbol(operation))
+  constructor(
+    getRawData: () => IRawData | undefined,
+    getConvertedData: () => IConvertedData | undefined,
+    getOperation: () => Operation,
+  ) {
+    this.getRawData = getRawData // ? - maybe unnecessary for rawData to be here
+    this.getConvertedData = getConvertedData
+    this.getOperation = getOperation
   }
 
-  private calculateWithString(operation: string) {
-    return evaluate(`${this.data[0][1]} ${operation} ${this.data[1][1]}`)
-  }
+  enumToSymbol = () => Calculator.operationSymbols.find(item => item[0] === this.getOperation())![1]
+  // switch (this.getOperation()) {
+  //   case Operation.Division:
+  //     return '/'
+  //   case Operation.Subtraction:
+  //     return '-'
+  //   case Operation.Addition:
+  //     return '+'
+  //   case Operation.Multiplication:
+  //     return '*'
+  // }
+  // }
+
+  calculate = () => evaluate(`${this.firstValue} ${this.enumToSymbol()} ${this.secondValue}`)
 }
-
-
-// convert Operation enum to symbol
-// calculator operations
