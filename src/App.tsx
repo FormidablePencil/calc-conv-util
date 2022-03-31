@@ -3,6 +3,7 @@ import Converter from './Converter';
 import Calculator, { Operation } from './Calculator';
 import { BoxContainer, GenericBtn, OperationBtn } from './StyledElements';
 import { NotificationContainer } from 'react-notifications';
+import ReactLoading from 'react-loading';
 import 'react-notifications/lib/notifications.css';
 
 export type IRawData = (string)[][] // e.g. [["key1", "value1"], ["key2", "value2"]]
@@ -28,17 +29,18 @@ export class Test123 extends React.Component {
 }
 
 function ConverterUI() {
-  const [errMsg, setErrMsg] = useState<string>() // todo - handle num invalid
-
+  // const [errMsg, setErrMsg] = useState<string>()
   const [rawData, setRawData] = useState<IRawData>()
   const [convertedData, setConvertedData] = useState<IConvertedData>()
-  const [operation, setOperation] = useState<Operation>(Operation.Addition)
+  const [operation, setOperation] = useState(Operation.Addition)
+  const [loading, setLoading] = useState(false)
   const converter = new Converter(
     (newState) => setRawData(newState),
     () => rawData,
     (newState) => setConvertedData(newState),
     () => convertedData,
-    () => operation
+    () => operation,
+    (newState) => setLoading(newState)
   );
 
   const calculator = new Calculator(() => rawData, () => convertedData, () => operation)
@@ -48,17 +50,17 @@ function ConverterUI() {
   const RESToperations = () =>
     <div className="flex">
       <GenericBtn
-        onClick={converter.requestData}>Get data</GenericBtn> {/* Show the response and converted result */}
+        onClick={converter.requestData}>Get</GenericBtn> {/* Show the response and converted result */}
       <GenericBtn
         inverted
-        onClick={converter.postCalculatedResult}>Post result</GenericBtn> {/* Signify that post was made onclick */}
+        onClick={converter.postCalculatedResult}>Post</GenericBtn> {/* Signify that post was made onclick */}
     </div>
 
   const RequestResponse = ({ data, title }: { data: IConvertedData | IRawData, title: string }) =>
-    <div className="flex-1">
-      {title}
+    <div className="flex-1 p-1">
+      <h2 className="text-1xl pb-2">{title}</h2>
       {data.map((item) =>
-        <div className="">
+        <div className="text-sm">
           <p>Key: {item[0]}</p>
           <p>Value: {item[1]}</p>
         </div>
@@ -66,7 +68,7 @@ function ConverterUI() {
     </div>
 
   const CalcOperationSelector = () =>
-    <div className="flex">
+    <div className="flex font-funky">
       {Calculator.operationSymbols.map((symbol) =>
         <OperationBtn onClick={() => setOperation(symbol[0] as Operation)}>
           {symbol[1]}
@@ -75,33 +77,40 @@ function ConverterUI() {
     </div>
 
   const CalculatorUI = () =>
-    <div className="bg-orange-400">
-      <span>{calculator.firstValue ?? "_"}</span>
+    <div className="flex justify-around text-4xl font-funky">
+      <span>{calculator.firstValue ?? "__"}</span>
       <span>{calculator.operationEnumToSymbol()}</span>
-      <span>{calculator.secondValue ?? "_"}</span>
+      <span>{calculator.secondValue ?? "__"}</span>
       <span>{'='}</span>
-      <span>{calculator.firstValue ? calculator.calculateRounded() : "_"}</span>
+      <span>{calculator.firstValue ? calculator.calculateRounded() : "__"}</span>
     </div>
   // ============= compositions ======================
 
 
   return (
-    <BoxContainer>
-      <>
-        <RESToperations />
+    <div className="flex justify-center items-center">
+      {loading &&
+        <ReactLoading className='absolute' type="cylon" color="#7871E5" height={100} width={100} />
+      }
+      <BoxContainer>
+        <>
+          <RESToperations />
 
-        <CalcOperationSelector />
+          <CalcOperationSelector />
 
-        {rawData && convertedData &&
-          <div className="flex">
-            <RequestResponse data={rawData} title="Raw data" />
-            <RequestResponse data={convertedData} title="Converted data" />
+          <div className={`m-2 flex flex-1 basic-transition-${rawData && convertedData ? "in" : "out"}`}>
+            {rawData && convertedData &&
+              <div className="flex flex-1">
+                <RequestResponse data={rawData} title="Raw data" />
+                <RequestResponse data={convertedData} title="Converted data" />
+              </div>
+            }
           </div>
-        }
 
-        <CalculatorUI />
-      </>
-    </BoxContainer>
+          <CalculatorUI />
+        </>
+      </BoxContainer >
+    </div>
   )
 }
 
@@ -110,7 +119,6 @@ export enum ExceptionCode { InvalidInput = "Invalid input" }
 const App = () =>
   <div className="flex h-screen justify-center items-center bg-slate-200">
     <ConverterUI />
-
     <NotificationContainer />
   </div>
 

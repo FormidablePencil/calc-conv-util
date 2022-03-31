@@ -1,15 +1,16 @@
 import { ExceptionCode, IConvertedData, IRawData } from './App';
 import { Operation } from './Calculator';
 import Converter from './Converter';
-import axios from 'axios';
+
 describe("Converter", () => {
   let rawData: IRawData | undefined = undefined;
   let convertedData: IConvertedData | undefined = undefined;
   const setRawDataMock = jest.fn(x => rawData = x);
   const setConvertedDataMock = jest.fn(x => convertedData = x);
   const operation = () => Operation.Subtraction
+  const setLoading = () => { }
 
-  const converter = new Converter(setRawDataMock, () => rawData, setConvertedDataMock, () => convertedData, operation);
+  const converter = new Converter(setRawDataMock, () => rawData, setConvertedDataMock, () => convertedData, operation, setLoading);
 
   jest.setTimeout(10000)
 

@@ -16,31 +16,36 @@ export default class Converter {
   private setConvertedData
   private getConvertedData
   private getOperation
+  private setLoading
 
   constructor(
     setRawData: (newState: IRawData) => void,
     getRawData: () => IRawData | undefined,
     setConvertedData: (newState: IConvertedData) => void,
     convertedData: () => IConvertedData | undefined,
-    getOperation: () => Operation
+    getOperation: () => Operation,
+    setLoading: (newState: boolean) => void,
   ) {
     this.setRawData = setRawData
     this.getRawData = getRawData
     this.setConvertedData = setConvertedData
     this.getConvertedData = convertedData
     this.getOperation = getOperation
+    this.setLoading = setLoading
   }
 
   requestData = async () => {
+    this.setLoading(true)
     this.setRawData(await this.fetchRawData())
     this.setConvertedData(await this.convertData())
+    this.setLoading(false)
   }
 
   postCalculatedResult = async () => {
     let gatheredData = [...this.getConvertedData()!, ["operation", this.getOperation()]]
 
     const formattedData = Object.fromEntries(gatheredData)
-    let notificationMsg = gatheredData?.map(item => `{${item[0]}: ${item[1]}}`)
+    let notificationMsg = gatheredData?.map(item => ` ${item[0]}: ${item[1]}`)
 
     NotificationManager.success(`${notificationMsg}`, "Posted formatted data");
 
