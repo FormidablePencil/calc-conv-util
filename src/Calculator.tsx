@@ -1,4 +1,6 @@
-import { evaluate } from "mathjs";
+import { evaluate } from 'mathjs';
+
+import { IConvertedData } from './App';
 
 export enum Operation {
   Division = 'plus',
@@ -8,25 +10,31 @@ export enum Operation {
 }
 
 export default class Calculator {
-  calculate(operation: Operation) {
-    evaluate('1 + 2')
-    // math.evaluate('1.2 * (2 + 4.5)')
+  data: IConvertedData
+
+  constructor(data: IConvertedData) {
+    this.data = data
   }
 
   enumToSymbol = (operation: Operation) => {
     switch (operation) {
       case Operation.Division:
-        break;
-
+        return '/'
       case Operation.Subtraction:
-        break;
-
+        return '-'
       case Operation.Addition:
-        break;
-
+        return '+'
       case Operation.Multiplication:
-        break;
+        return '*'
     }
+  }
+
+  calculate(operation: Operation) {
+    return this.calculateWithString(this.enumToSymbol(operation))
+  }
+
+  private calculateWithString(operation: string) {
+    return evaluate(`${this.data[0][1]} ${operation} ${this.data[1][1]}`)
   }
 }
 
