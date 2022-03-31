@@ -1,34 +1,37 @@
 import axios from 'axios';
 import { Dispatch, SetStateAction } from 'react';
 import wordsToNumbers from 'words-to-numbers';
-import { ExceptionCode, Operation } from './App';
+import { ExceptionCode, IConvertedData, IRawData } from './App';
+import { Operation } from "./Calculator";
 
 /**
  * Fetches data on initialization
  * 
  * May throw an exception if the data if a word provided is invalid @property {wordToNum}
  */
-export class Converter {
+export default class Converter {
   setRawData;
-  setFormattedData;
-  formattedData;
+  setConvertedData;
+  convertedData;
 
   constructor(
-    setRawData: Dispatch<SetStateAction<[string, string][] | undefined>>,
-    setFormattedData: Dispatch<SetStateAction<[string, string][] | undefined>>,
-    formattedData: [string, string][] = []
+    setRawData: Dispatch<SetStateAction<IRawData | undefined>>,
+    setConvertedData: Dispatch<SetStateAction<IConvertedData | undefined>>,
+    convertedData: IConvertedData | undefined
   ) {
     this.setRawData = setRawData
-    this.setFormattedData = setFormattedData
-    this.formattedData = formattedData
+    this.setConvertedData = setConvertedData
+    this.convertedData = convertedData
   }
 
   async requestData() {
     this.setRawData(await this.getRawData())
+    this.setConvertedData(await this.getConvertedData())
   }
 
   async postCalculatedResult(operation: Operation) {
-    axios.post("https://100insure.com/mi/api2.php", this.formattedData)
+    // todo - need calculated result
+    // axios.post("https://100insure.com/mi/api2.php", this.convertedData)
   }
 
   private async getRawData(): Promise<[string, string][]> {
@@ -36,7 +39,7 @@ export class Converter {
     return Object.entries(data)
   }
 
-  private formatKey(key: string) {
+  private convertKey(key: string) {
     return `num${parseInt(key.charAt(key.length - 1))}`
   }
 
@@ -47,12 +50,12 @@ export class Converter {
     else return res
   }
 
-  private async getFormattedData() {
+  private async getConvertedData() {
     const data = await this.getRawData()
 
     const convertedData = data.map(item => {
       const keyValuePair = [
-        this.formatKey(item[0]),
+        this.convertKey(item[0]),
         this.wordToNum(item[1])
       ]
       return keyValuePair
