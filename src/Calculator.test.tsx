@@ -28,16 +28,16 @@ describe('calculator', () => {
     for (const value of [Operation.Division, Operation.Subtraction, Operation.Addition, Operation.Multiplication]) {
 
       operation = value
-      expect(typeof calculator.calculate() === "number").toBeTruthy()
-      console.log(calculator.calculate())
+      expect(typeof calculator.calculateRounded() === "number").toBeTruthy()
+      console.log(calculator.calculateRounded())
     }
   })
 
   test('enumToSymbol', async () => {
     operation = Operation.Division;
-    expect(calculator.enumToSymbol()).toBe('/');
+    expect(calculator.operationEnumToSymbol()).toBe('/');
 
     operation = Operation.Subtraction;
-    expect(calculator.enumToSymbol()).toBe('-');
+    expect(calculator.operationEnumToSymbol()).toBe('-');
   })
 })

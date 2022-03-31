@@ -1,8 +1,9 @@
 import axios from 'axios';
-import { Dispatch, SetStateAction } from 'react';
+import { NotificationManager } from 'react-notifications';
 import wordsToNumbers from 'words-to-numbers';
+
 import { ExceptionCode, IConvertedData, IRawData } from './App';
-import { Operation } from "./Calculator";
+import { Operation } from './Calculator';
 
 /**
  * Fetches data on initialization
@@ -10,32 +11,46 @@ import { Operation } from "./Calculator";
  * May throw an exception if the data if a word provided is invalid @property {wordToNum}
  */
 export default class Converter {
-  setRawData;
-  setConvertedData;
-  convertedData;
+  private setRawData
+  private getRawData
+  private setConvertedData
+  private getConvertedData
+  private getOperation
 
   constructor(
-    setRawData: Dispatch<SetStateAction<IRawData | undefined>>,
-    setConvertedData: Dispatch<SetStateAction<IConvertedData | undefined>>,
-    convertedData: IConvertedData | undefined
+    setRawData: (newState: IRawData) => void,
+    getRawData: () => IRawData | undefined,
+    setConvertedData: (newState: IConvertedData) => void,
+    convertedData: () => IConvertedData | undefined,
+    getOperation: () => Operation
   ) {
     this.setRawData = setRawData
+    this.getRawData = getRawData
     this.setConvertedData = setConvertedData
-    this.convertedData = convertedData
+    this.getConvertedData = convertedData
+    this.getOperation = getOperation
   }
 
-  async requestData() {
-    this.setRawData(await this.getRawData())
-    this.setConvertedData(await this.getConvertedData())
+  requestData = async () => {
+    this.setRawData(await this.fetchRawData())
+    this.setConvertedData(await this.convertData())
   }
 
-  async postCalculatedResult(operation: Operation) {
-    // todo - need calculated result
-    // axios.post("https://100insure.com/mi/api2.php", this.convertedData)
+  postCalculatedResult = async () => {
+    let gatheredData = [...this.getConvertedData()!, ["operation", this.getOperation()]]
+
+    const formattedData = Object.fromEntries(gatheredData)
+    let notificationMsg = gatheredData?.map(item => `{${item[0]}: ${item[1]}}`)
+
+    NotificationManager.success(`${notificationMsg}`, "Posted formatted data");
+
+    const res = await axios.post("https://100insure.com/mi/api2.php", JSON.stringify(formattedData))
+
+    NotificationManager.success(`Response data: ${res.data}`, 'Request response');
   }
 
-  private async getRawData(): Promise<[string, string][]> {
-    const data = await (await axios.get("https://100insure.com/mi/api1.php")).data
+  private async fetchRawData(): Promise<[string, string][]> {
+    const { data } = await axios.get("https://100insure.com/mi/api1.php")
     return Object.entries(data)
   }
 
@@ -50,8 +65,8 @@ export default class Converter {
     else return res
   }
 
-  private async getConvertedData() {
-    const data = await this.getRawData()
+  private async convertData() {
+    const data = this.getRawData() ?? await this.fetchRawData()
 
     const convertedData = data.map(item => {
       const keyValuePair = [

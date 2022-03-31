@@ -17,9 +17,9 @@ export default class Calculator {
     [Operation.Multiplication, "*"]
   ]
 
-  private getRawData(): IRawData | undefined { return undefined }
-  private getConvertedData(): IConvertedData | undefined { return undefined }
-  getOperation(): Operation { return Operation.Addition }
+  private getRawData
+  private getConvertedData
+  getOperation
 
   get firstValue() {
     if (this.getConvertedData() === undefined) return undefined
@@ -41,18 +41,8 @@ export default class Calculator {
     this.getOperation = getOperation
   }
 
-  enumToSymbol = () => Calculator.operationSymbols.find(item => item[0] === this.getOperation())![1]
-  // switch (this.getOperation()) {
-  //   case Operation.Division:
-  //     return '/'
-  //   case Operation.Subtraction:
-  //     return '-'
-  //   case Operation.Addition:
-  //     return '+'
-  //   case Operation.Multiplication:
-  //     return '*'
-  // }
-  // }
+  operationEnumToSymbol = () => Calculator.operationSymbols.find(item => item[0] === this.getOperation())![1]
 
-  calculate = () => evaluate(`${this.firstValue} ${this.enumToSymbol()} ${this.secondValue}`)
+  calculate = () => evaluate(`${this.firstValue} ${this.operationEnumToSymbol()} ${this.secondValue}`)
+  calculateRounded = () => parseFloat(this.calculate().toFixed(2))
 }

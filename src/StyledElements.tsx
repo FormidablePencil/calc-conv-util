@@ -1,0 +1,28 @@
+export const GenericBtn = ({
+  inverted = false,
+  onClick,
+  children,
+}:
+  {
+    inverted?: boolean,
+    onClick: () => Promise<void>,
+    children: React.ReactChild
+  }) =>
+  <button
+    onClick={onClick}
+    className={`w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white ${!inverted ? "bg-indigo-600" : "bg-white"} hover:bg-indigo-700 md:py-4 md:text-lg md:px-10 m-1`}>
+    {children}
+  </button>
+
+export const OperationBtn = ({ onClick, children }: { onClick: () => void, children: React.ReactChild }) =>
+  <button
+    onClick={onClick}
+    className="w-full flex items-center justify-center px-8 py-3 border border-transparent
+        text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10 m-1">
+    {children}
+  </button>
+
+export const BoxContainer = ({ children }: { children: React.ReactChild }) =>
+  <div className="shadow sm:rounded-md sm:overflow-hidden x-4 py-5p bg-white space-y-6 sm:p-6">
+    {children}
+  </div>
